@@ -10,7 +10,29 @@
     width: 700px;
 }
 
-fiveDayText{
-    size=5px;
+.dayBlock{
+    padding: 10px;
+    background-color: lightblue;
+    margin: 10px;
+    border-radius:5px;
+    width: 100%;
+    
 }
 
+.searchButton{
+    width: 100%;
+    text-align: left;
+    border: 2px;
+    border-width: 100%;
+    border-color: black;
+    padding-left: 2em;
+    padding-right: 2em;
+}
+
+#subCity{
+    padding-left: 2em;
+}
+
+h5{
+    padding-left: 1em;
+}

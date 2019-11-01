@@ -1,5 +1,4 @@
-
-
+//Search the Current Weather for the city inputed
 function searchWeatherCurrent(city) {
     var queryURL = "https://api.openweathermap.org/data/2.5/weather?q="+city+"&units=metric&appid=05e23075e882fced18dcc8b62be741f4";
     $.ajax({
@@ -43,8 +42,8 @@ function searchWeatherCurrent(city) {
   }
 
 //Five Day Forcast
+//The array is for every 3 hours, so we had to search for the 5 days at 12:00pm
   function searchFiveDays(cityId) {
-    console.log("City ID= "+ cityId);
     var queryURL = "https://api.openweathermap.org/data/2.5/forecast?id="+cityId+"&appid=05e23075e882fced18dcc8b62be741f4&units=metric";
     $.ajax({
       url: queryURL,
@@ -52,44 +51,41 @@ function searchWeatherCurrent(city) {
 
     }).then(function(response) {
       var fullForcast = response.list;
-      console.log(fullForcast);
       var day = moment().add(1,'days').format("YYYY-MM-DD") + " 12:00:00";
       var dayIndex = [];
       for (var i=0; i < 9; i++){
+        //find the first day at 12:00pm and captures the array number
         if (day == fullForcast[i].dt_txt){
-          console.log("This is true at index: ",i);
           var dayIndexNum = i;
-          for (var c=0; c<5; c++){
-            dayIndex.push(dayIndexNum);
-            dayIndexNum += 8;
-          }//for with c
-        }//if
-      }//for with i
+        }
+      }
+      //Then grabs the next 5 days
+      for (var c=0; c<5; c++){
+        dayIndex.push(dayIndexNum);
+        //12:00pm happens every 8th array element
+        dayIndexNum += 8;
+      }
       displayFiveDays(dayIndex, response.list);
-    });//then
+    });
+    $("<h2>Five Day Forcast</h2>").appendTo("#fiveDayTitle")
   }
 
   function displayFiveDays(dayIndex, response){
-    console.log("NEW RESPONCE", response);
     for (var i=0; i< dayIndex.length; i++){
       num = dayIndex[i]
-      console.log(num);
       var date = (response[num].dt_txt.split(" ")[0]);
       var img = response[num].weather[0].icon;
       var temp = response[num].main.temp;
       var humidity = response[num].main.humidity;
-      console.log(date, img, temp, humidity);
-      $("#fiveDayDiv").append(fiveDayCard(date, img, temp, humidity));
+      $("#fiveDayDiv").attr("class","row").append(fiveDayBlock(date, img, temp, humidity));
     }
- 
   }
 
-  //function to create the card
-  function fiveDayCard(day, img, temp, hum){
-    var dayCard = $("<div>").attr("class","dayCard col-2");    
-    dayCard.append($("<label>").text(day), $("<img>").attr("src","https://openweathermap.org/img/wn/"+img+".png"), $("<p>").text("Temp: " + temp + "°C"), $("<p>").text("Humidity: "+ hum+"%"));
-
-    return dayCard;
+  //function to create the Blocks for each day
+  function fiveDayBlock(day, img, temp, hum){
+    var dayBlock = $("<div>").attr("class","dayBlock col-2");
+    dayBlock.append($("<label>").text(day), $("<img>").attr("src","https://openweathermap.org/img/wn/"+img+".png"), $("<p>").text("Temp: " + temp + "°C"), $("<p>").text("Humidity: "+ hum+"%"));
+    return dayBlock;
 }
 
   //Search Button
@@ -97,7 +93,12 @@ function searchWeatherCurrent(city) {
     event.preventDefault();
     var inputCity = $("#searchCity").val().trim(); 
     searchWeatherCurrent(inputCity);
-    
-    //searchWeatherFiveDays(inputCity);
-    console.log("Inputcity = "+ inputCity);
+  });
+
+  //Search if press enter
+  $("#searchCity").on("keypress", function(event){
+    if(event.which == 13){
+      var inputCity = $("#searchCity").val().trim(); 
+      searchWeatherCurrent(inputCity);
+    }
   });
